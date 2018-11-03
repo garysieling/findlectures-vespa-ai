@@ -1,0 +1,14 @@
+version: '3'
+services:
+  search:
+    build: app
+    image: vespaengine/vespa
+    ports: 
+      - 8080:8080
+      - 19112:19112
+  loader:
+    build: .
+    image: alpine:latest
+    depends_on: 
+      - search
+    command: ["./wait-for-it.sh", "search:8080", "--", "ls"]
