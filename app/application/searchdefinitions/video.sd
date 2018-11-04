@@ -1,9 +1,39 @@
 search video {
     document video {
-        field title type string {
+        field description type string {
             indexing: summary | index
         }
-        field description type string {
+        field dislike_count type int {
+            indexing: summary | attribute
+        }
+        field duration type int {
+            indexing: summary | attribute
+        }
+        field embeddable type int {
+            indexing: summary 
+        }
+        field embedHtml type string {
+            indexing: summary 
+        }
+        field id type string {
+            indexing: summary
+        }
+        field like_count type int {
+            indexing: summary | attribute
+        }
+        field relevantTopicIds type array<string> {
+            indexing: summary
+        }
+        field thumbnail type string {
+            indexing: summary
+        }
+        field topicCategories type array<string> {
+            indexing: summary
+        }
+        field tags type array<string> {
+            indexing: summary
+        }
+        field title type string {
             indexing: summary | index
         }
         field url type string {
@@ -12,25 +42,7 @@ search video {
         field upload_date type string {
             indexing: summary
         }
-        field id type string {
-            indexing: summary
-        }
-        field thumbnail type string {
-            indexing: summary
-        }
-        field tags type array<string> {
-            indexing: summary
-        }
-        field like_count type int {
-            indexing: summary | attribute
-        }
-        field dislike_count type int {
-            indexing: summary | attribute
-        }
         field view_count type int {
-            indexing: summary | attribute
-        }
-        field duration type int {
             indexing: summary | attribute
         }
     }
