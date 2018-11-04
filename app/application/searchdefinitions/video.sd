@@ -24,6 +24,9 @@ search video {
         field relevantTopicIds type array<string> {
             indexing: summary
         }
+        field subtitles type string {
+            indexing: index
+        }
         field thumbnail type string {
             indexing: summary
         }
