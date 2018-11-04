@@ -1,0 +1,50 @@
+search video {
+    document video {
+        field title type string {
+            indexing: summary | index
+        }
+        field description type string {
+            indexing: summary | index
+        }
+        field url type string {
+            indexing: summary
+        }
+        field upload_date type string {
+            indexing: summary
+        }
+        field id type string {
+            indexing: summary
+        }
+        field thumbnail type string {
+            indexing: summary
+        }
+        field tags type array<string> {
+            indexing: summary
+        }
+        field like_count type int {
+            indexing: summary | attribute
+        }
+        field dislike_count type int {
+            indexing: summary | attribute
+        }
+        field view_count type int {
+            indexing: summary | attribute
+        }
+        field duration type int {
+            indexing: summary | attribute
+        }
+    }
+    fieldset default {
+        fields: title, description
+    }
+    rank-profile post inherits default {
+        first-phase {
+            expression:nativeRank(title, description)
+        }
+    }
+    rank-profile popularity inherits default {
+        first-phase {
+            expression: nativeRank(title, description) + 10 * if(isNan(attribute(like_count)), 0, attribute(like_count))
+        }
+    }
+}

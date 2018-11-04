@@ -3,11 +3,11 @@ set -e
 
 CID=`docker ps --filter "name=findlectures_vespa" -q`
 
-docker container prune -f
-
 if [ ! -z $CID ]; then
   docker container kill $CID
 fi
+
+docker container prune -f
 
 docker run -m 10G --detach --name findlectures_vespa --hostname findlectures \
     --rm --privileged --volume `pwd`/app:/app \
@@ -18,5 +18,11 @@ do
   :
 done
 
-./load.sh
-#./wait-for-it.sh -t 120 localhost:8080 -- ./load.sh
+docker exec findlectures_vespa bash -c \
+    '/opt/vespa/bin/vespa-deploy prepare /app/application && \
+    /opt/vespa/bin/vespa-deploy activate'
+
+docker exec findlectures_vespa bash -c \
+    'java -jar /opt/vespa/lib/jars/vespa-http-client-jar-with-dependencies.jar \
+    --verbose --file /app/videos.json --host localhost --port 8080'
+
