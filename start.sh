@@ -1,13 +1,22 @@
 set -o xtrace
 set -e 
 
-docker run -m 10G --detach --name vespa --hostname vespa-tutorial \
-    --privileged --volume `pwd`:/app \
+CID=`docker ps --filter "name=findlectures_vespa" -q`
+
+docker container prune -f
+
+if [ ! -z $CID ]; then
+  docker container kill $CID
+fi
+
+docker run -m 10G --detach --name findlectures_vespa --hostname findlectures \
+    --rm --privileged --volume `pwd`/app:/app \
     --publish 8080:8080 --publish 19112:19112 vespaengine/vespa
 
-docker exec vespa bash -c '/opt/vespa/bin/vespa-deploy prepare /app/application && \
-    /opt/vespa/bin/vespa-deploy activate'
+until docker exec findlectures_vespa bash -c 'curl -s --head http://localhost:19071/ApplicationStatus'
+do
+  :
+done
 
-docker exec vespa bash -c 'java -jar /opt/vespa/lib/jars/vespa-http-client-jar-with-dependencies.jar \
-    --verbose --file /app/data.json --host localhost --port 8080'
-
+./load.sh
+#./wait-for-it.sh -t 120 localhost:8080 -- ./load.sh
